@@ -1,3 +1,4 @@
+const { hash } = require('bcryptjs')
 const UserService = require('../services/userService')
 const userService = new UserService()
 
@@ -46,7 +47,11 @@ class UserController {
         const  novosDados = req.body
         const { id } = req.params
 
-        
+        if (novosDados.password) {
+            const passwordHash = await hash(novosDados.password, 8);
+            novosDados.password = passwordHash;
+        }
+
         try {
             await userService.updateRecords(novosDados, id)
             const dadosAtt = await userService.getRecordsById(id)
